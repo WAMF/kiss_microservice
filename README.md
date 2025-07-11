@@ -73,6 +73,30 @@ A comprehensive Todo microservice built with Dart following the KISS architectur
    - Open http://localhost:8080 for API documentation
    - Explore the comprehensive API endpoints
 
+### 🐳 Docker Quick Start
+
+For the fastest way to get started, use Docker:
+
+```bash
+# Build, run, and test everything in one command
+./scripts/docker-all.sh
+```
+
+Or run individual steps:
+
+```bash
+# Build Docker image
+./scripts/docker-build.sh
+
+# Run Docker container
+./scripts/docker-run.sh
+
+# Test the running service
+./scripts/docker-test.sh
+```
+
+The service will be available at http://localhost:8080
+
 ## 📡 API Endpoints
 
 ### Core CRUD Operations
@@ -232,9 +256,50 @@ The project uses OpenAPI-first development:
 
 ## 🚀 Deployment
 
-The microservice is designed for easy deployment:
+### 🐳 Docker Deployment
 
-- **Docker**: Containerize with official Dart image
+The project includes comprehensive Docker support with helper scripts:
+
+#### Quick Commands
+
+```bash
+# All-in-one: build, run, and test
+./scripts/docker-all.sh
+
+# Individual operations
+./scripts/docker-build.sh          # Build image
+./scripts/docker-run.sh            # Run container
+./scripts/docker-test.sh           # Test service
+```
+
+#### Manual Docker Commands
+
+```bash
+# Build the image
+docker build -t todo-api .
+
+# Run the container
+docker run -d --name todo-api-container -p 8080:8080 todo-api
+
+# Test the service
+curl http://localhost:8080/todos/stats
+```
+
+#### Docker Compose
+
+```bash
+# Run with docker-compose
+docker-compose up -d
+
+# View logs
+docker-compose logs -f
+
+# Stop services
+docker-compose down
+```
+
+### Other Deployment Options
+
 - **Cloud Run**: Deploy on Google Cloud Run
 - **AWS Lambda**: Use with AWS Lambda for Dart
 - **Kubernetes**: Deploy as a pod with health checks

@@ -6,7 +6,6 @@ import '../../helpers/test_helpers.dart';
 
 void main() {
   group('TodoService Tests', () {
-    late Repository<Todo> repository;
     late TodoService service;
 
     setUp(() {
@@ -14,7 +13,6 @@ void main() {
       // Using the TodoApiConfiguration factory as a reference for proper setup
       final config =
           TodoApiConfiguration.withInMemoryRepository(path: 'test_todos');
-      repository = config.repository;
       service = config.todoService;
     });
 
@@ -95,14 +93,13 @@ void main() {
 
       test('should get all todos sorted by creation date', () async {
         // Create multiple todos with slight delays
-        final todo1 =
-            await service.createTodo(TestData.createTodoCreate(title: 'First'));
+
+        await service.createTodo(TestData.createTodoCreate(title: 'First'));
         await TestHelpers.waitFor(TestConstants.shortDelay);
-        final todo2 = await service
-            .createTodo(TestData.createTodoCreate(title: 'Second'));
+        await service.createTodo(TestData.createTodoCreate(title: 'Second'));
         await TestHelpers.waitFor(TestConstants.shortDelay);
-        final todo3 =
-            await service.createTodo(TestData.createTodoCreate(title: 'Third'));
+
+        await service.createTodo(TestData.createTodoCreate(title: 'Third'));
 
         final allTodos = await service.getAllTodos();
 

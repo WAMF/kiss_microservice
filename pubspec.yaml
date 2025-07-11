@@ -1,19 +1,36 @@
-name: todo_api_example
-description: A simple Todo API example built with Dart and Shelf
+name: todo_microservice
+description: A Todo microservice following the KISS architectural pattern
 version: 1.0.0
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
 
 dependencies:
-  shelf: ^1.4.0
-  shelf_plus: ^1.0.2
+  # Kiss ecosystem
+  kiss_repository: ^0.12.0
+  
+  # HTTP server
+  shelf_plus: ^1.6.0
+  
+  # JSON/OpenAPI
+  freezed_annotation: ^2.4.1
   json_annotation: ^4.8.1
+  openapi_base: ^2.0.0
+  
+  # Utilities
+  meta: ^1.12.0
   uuid: ^4.2.1
-  kiss_dependencies: ^1.3.0
 
 dev_dependencies:
+  # Code generation
   build_runner: ^2.4.7
   json_serializable: ^6.7.1
-  lints: ^3.0.0
+  openapi_code_builder: ^1.6.0+2
+  
+  # Testing
   test: ^1.24.0
+  http: ^1.1.0
+  shelf: ^1.4.0
+  
+  # Linting
+  very_good_analysis: ^5.1.0

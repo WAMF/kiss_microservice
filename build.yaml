@@ -1,0 +1,8 @@
+targets:
+  $default:
+    builders:
+      openapi_code_builder:
+        generate_for:
+          - lib/api/*.openapi.yaml
+        options:
+          output_directory: lib/api/ 

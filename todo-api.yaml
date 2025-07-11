@@ -1,0 +1,242 @@
+openapi: 3.0.3
+info:
+  title: Todo Microservice API
+  version: 1.0.0
+  description: A Todo microservice following the KISS architectural pattern
+
+servers:
+  - url: http://localhost:8080
+    description: Development server
+
+paths:
+  /todos:
+    get:
+      summary: Get all todos
+      parameters:
+        - name: status
+          in: query
+          description: Filter by completion status
+          schema:
+            type: string
+            enum: [completed, pending]
+      responses:
+        '200':
+          description: List of todos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TodoListResponse'
+    
+    post:
+      summary: Create a new todo
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TodoCreate'
+      responses:
+        '201':
+          description: Todo created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Todo'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    
+    delete:
+      summary: Delete all todos
+      responses:
+        '200':
+          description: All todos deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+
+  /todos/{id}:
+    get:
+      summary: Get a todo by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Todo found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Todo'
+        '404':
+          description: Todo not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    
+    patch:
+      summary: Update a todo
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TodoUpdate'
+      responses:
+        '200':
+          description: Todo updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Todo'
+        '404':
+          description: Todo not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    
+    delete:
+      summary: Delete a todo
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Todo deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+        '404':
+          description: Todo not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    Todo:
+      type: object
+      required: [id, title, completed, createdAt]
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the todo
+          example: "123e4567-e89b-12d3-a456-426614174000"
+        title:
+          type: string
+          description: The todo title
+          example: "Buy groceries"
+          minLength: 1
+          maxLength: 200
+        description:
+          type: string
+          description: Optional detailed description
+          example: "Need to buy milk, eggs, and bread"
+          maxLength: 1000
+        completed:
+          type: boolean
+          description: Whether the todo is completed
+          example: false
+        createdAt:
+          type: string
+          format: date-time
+          description: When the todo was created
+          example: "2023-10-01T12:00:00Z"
+        completedAt:
+          type: string
+          format: date-time
+          description: When the todo was completed (if completed)
+          example: "2023-10-01T14:30:00Z"
+    
+    TodoCreate:
+      type: object
+      required: [title]
+      properties:
+        title:
+          type: string
+          description: The todo title
+          example: "Buy groceries"
+          minLength: 1
+          maxLength: 200
+        description:
+          type: string
+          description: Optional detailed description
+          example: "Need to buy milk, eggs, and bread"
+          maxLength: 1000
+    
+    TodoUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Updated title
+          example: "Buy groceries and cook dinner"
+          minLength: 1
+          maxLength: 200
+        description:
+          type: string
+          description: Updated description
+          example: "Updated task details"
+          maxLength: 1000
+        completed:
+          type: boolean
+          description: Updated completion status
+          example: true
+    
+    TodoListResponse:
+      type: object
+      required: [todos, total]
+      properties:
+        todos:
+          type: array
+          items:
+            $ref: '#/components/schemas/Todo'
+          description: List of todos
+        total:
+          type: integer
+          description: Total number of todos
+          example: 5
+    
+    MessageResponse:
+      type: object
+      required: [message]
+      properties:
+        message:
+          type: string
+          description: Success message
+          example: "Operation completed successfully"
+    
+    ErrorResponse:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
+          description: Error message
+          example: "Todo not found" 

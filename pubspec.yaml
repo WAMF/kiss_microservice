@@ -10,6 +10,7 @@ dependencies:
   kiss_repository: ^0.12.0
   
   # HTTP server
+  shelf: ^1.4.0
   shelf_plus: ^1.6.0
   
   # JSON/OpenAPI
@@ -30,7 +31,6 @@ dev_dependencies:
   # Testing
   test: ^1.24.0
   http: ^1.1.0
-  shelf: ^1.4.0
   
   # Linting
   very_good_analysis: ^5.1.0

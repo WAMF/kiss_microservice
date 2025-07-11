@@ -49,6 +49,16 @@ http_request() {
     fi
 }
 
+# Function to extract status code (last line)
+get_status_code() {
+    echo "$1" | tail -n1
+}
+
+# Function to extract body (all but last line)
+get_body() {
+    echo "$1" | sed '$d'
+}
+
 # Wait for service to be ready
 print_status "INFO" "Waiting for service to be ready..."
 max_attempts=30
@@ -73,8 +83,8 @@ echo ""
 # Test 1: Root endpoint
 print_status "INFO" "Test 1: Root endpoint"
 response=$(http_request "GET" "$BASE_URL/")
-status_code=$(echo "$response" | tail -n1)
-body=$(echo "$response" | head -n -1)
+status_code=$(get_status_code "$response")
+body=$(get_body "$response")
 
 if [ "$status_code" = "200" ]; then
     print_status "PASS" "Root endpoint returns 200"
@@ -91,8 +101,8 @@ echo ""
 # Test 2: Get all todos (should be empty initially)
 print_status "INFO" "Test 2: Get all todos"
 response=$(http_request "GET" "$BASE_URL/todos")
-status_code=$(echo "$response" | tail -n1)
-body=$(echo "$response" | head -n -1)
+status_code=$(get_status_code "$response")
+body=$(get_body "$response")
 
 if [ "$status_code" = "200" ]; then
     print_status "PASS" "GET /todos returns 200"
@@ -110,8 +120,8 @@ echo ""
 print_status "INFO" "Test 3: Create a todo"
 todo_data='{"title":"Test Todo","description":"Testing Docker service"}'
 response=$(http_request "POST" "$BASE_URL/todos" "$todo_data")
-status_code=$(echo "$response" | tail -n1)
-body=$(echo "$response" | head -n -1)
+status_code=$(get_status_code "$response")
+body=$(get_body "$response")
 
 if [ "$status_code" = "201" ]; then
     print_status "PASS" "POST /todos returns 201"
@@ -130,8 +140,8 @@ echo ""
 if [ -n "$todo_id" ]; then
     print_status "INFO" "Test 4: Get created todo"
     response=$(http_request "GET" "$BASE_URL/todos/$todo_id")
-    status_code=$(echo "$response" | tail -n1)
-    body=$(echo "$response" | head -n -1)
+    status_code=$(get_status_code "$response")
+    body=$(get_body "$response")
 
     if [ "$status_code" = "200" ]; then
         print_status "PASS" "GET /todos/{id} returns 200"
@@ -151,8 +161,8 @@ if [ -n "$todo_id" ]; then
     print_status "INFO" "Test 5: Update todo"
     update_data='{"completed":true}'
     response=$(http_request "PATCH" "$BASE_URL/todos/$todo_id" "$update_data")
-    status_code=$(echo "$response" | tail -n1)
-    body=$(echo "$response" | head -n -1)
+    status_code=$(get_status_code "$response")
+    body=$(get_body "$response")
 
     if [ "$status_code" = "200" ]; then
         print_status "PASS" "PATCH /todos/{id} returns 200"
@@ -170,8 +180,8 @@ fi
 # Test 6: Get todo statistics
 print_status "INFO" "Test 6: Get todo statistics"
 response=$(http_request "GET" "$BASE_URL/todos/stats")
-status_code=$(echo "$response" | tail -n1)
-body=$(echo "$response" | head -n -1)
+status_code=$(get_status_code "$response")
+body=$(get_body "$response")
 
 if [ "$status_code" = "200" ]; then
     print_status "PASS" "GET /todos/stats returns 200"
@@ -188,8 +198,8 @@ echo ""
 # Test 7: Search todos
 print_status "INFO" "Test 7: Search todos"
 response=$(http_request "GET" "$BASE_URL/todos/search/Test")
-status_code=$(echo "$response" | tail -n1)
-body=$(echo "$response" | head -n -1)
+status_code=$(get_status_code "$response")
+body=$(get_body "$response")
 
 if [ "$status_code" = "200" ]; then
     print_status "PASS" "GET /todos/search/{query} returns 200"
@@ -201,7 +211,7 @@ echo ""
 # Test 8: Test error handling
 print_status "INFO" "Test 8: Error handling"
 response=$(http_request "GET" "$BASE_URL/todos/non-existent-id")
-status_code=$(echo "$response" | tail -n1)
+status_code=$(get_status_code "$response")
 
 if [ "$status_code" = "404" ]; then
     print_status "PASS" "Non-existent todo returns 404"
@@ -214,14 +224,14 @@ echo ""
 if [ -n "$todo_id" ]; then
     print_status "INFO" "Test 9: Delete todo"
     response=$(http_request "DELETE" "$BASE_URL/todos/$todo_id")
-    status_code=$(echo "$response" | tail -n1)
+    status_code=$(get_status_code "$response")
 
     if [ "$status_code" = "200" ]; then
         print_status "PASS" "DELETE /todos/{id} returns 200"
         
         # Verify todo is deleted
         response=$(http_request "GET" "$BASE_URL/todos/$todo_id")
-        status_code=$(echo "$response" | tail -n1)
+        status_code=$(get_status_code "$response")
         
         if [ "$status_code" = "404" ]; then
             print_status "PASS" "Deleted todo no longer exists"
